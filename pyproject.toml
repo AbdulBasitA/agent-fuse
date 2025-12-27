@@ -1,0 +1,71 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agent-fuse"
+version = "0.1.0"
+description = "A Circuit Breaker for AI Agents - Fail Safe by Default"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "AgentFuse Team" }
+]
+keywords = ["ai", "agents", "circuit-breaker", "safety", "llm", "openai", "langchain"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+]
+
+[project.optional-dependencies]
+openai = ["openai>=1.0"]
+langchain = ["langchain-core>=0.1"]
+tiktoken = ["tiktoken>=0.5"]
+all = [
+    "openai>=1.0",
+    "langchain-core>=0.1",
+    "tiktoken>=0.5",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21",
+    "pytest-cov>=4.0",
+    "ruff>=0.1",
+    "mypy>=1.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/agentfuse/agent-fuse"
+Documentation = "https://github.com/agentfuse/agent-fuse#readme"
+Repository = "https://github.com/agentfuse/agent-fuse"
+
+[tool.hatch.build.targets.wheel]
+packages = ["agent_fuse"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = true
+warn_unused_ignores = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
