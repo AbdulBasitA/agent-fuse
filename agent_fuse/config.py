@@ -27,6 +27,8 @@ class AgentFuseSettings(BaseSettings):
     - AGENTFUSE_MAX_RETRIES: Max DB retry attempts (default: 3)
     - AGENTFUSE_RETRY_DELAY: Base delay between retries in seconds (default: 0.1)
     - AGENTFUSE_LOG_LEVEL: Logging level (default: WARNING)
+    - AGENTFUSE_LOOP_THRESHOLD: Identical calls before loop error (default: 5)
+    - AGENTFUSE_LOOP_DETECTION_ENABLED: Enable loop detection (default: True)
     """
 
     model_config = SettingsConfigDict(
@@ -101,6 +103,19 @@ class AgentFuseSettings(BaseSettings):
         description="Timeout in seconds for fetching remote pricing.",
     )
 
+    # Loop Detection Configuration
+    loop_threshold: int = Field(
+        default=5,
+        ge=1,
+        le=100,
+        description="Number of identical tool calls before triggering SentinelLoopError.",
+    )
+
+    loop_detection_enabled: bool = Field(
+        default=True,
+        description="Enable/disable loop detection. When False, check_loop() is a no-op.",
+    )
+
     @field_validator("db_path", mode="before")
     @classmethod
     def expand_db_path(cls, v: str | Path) -> Path:
@@ -121,6 +136,8 @@ def configure(
     session_id: str | None = None,
     max_retries: int | None = None,
     retry_delay: float | None = None,
+    loop_threshold: int | None = None,
+    loop_detection_enabled: bool | None = None,
 ) -> AgentFuseSettings:
     """
     Configure Agent Fuse programmatically.
@@ -136,6 +153,8 @@ def configure(
         session_id: Optional session identifier
         max_retries: Maximum retry attempts for DB operations
         retry_delay: Base delay between retries in seconds
+        loop_threshold: Number of identical tool calls before SentinelLoopError
+        loop_detection_enabled: Enable/disable loop detection
 
     Returns:
         The new AgentFuseSettings instance
@@ -157,6 +176,10 @@ def configure(
         overrides["max_retries"] = max_retries
     if retry_delay is not None:
         overrides["retry_delay"] = retry_delay
+    if loop_threshold is not None:
+        overrides["loop_threshold"] = loop_threshold
+    if loop_detection_enabled is not None:
+        overrides["loop_detection_enabled"] = loop_detection_enabled
 
     # Create new settings with overrides
     settings = AgentFuseSettings(**overrides)

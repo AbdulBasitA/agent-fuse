@@ -71,7 +71,7 @@ class SentinelLoopError(SentinelError):
     Attributes:
         call_count: Number of similar calls detected
         time_window: Time window in seconds over which calls were counted
-        pattern: Description of the detected pattern (if available)
+        pattern: The tool call signature that was repeated (tool_name|args)
     """
 
     def __init__(
@@ -88,10 +88,15 @@ class SentinelLoopError(SentinelError):
         self.pattern = pattern
 
     def __str__(self) -> str:
-        base = f"Loop detected: {self.call_count} similar calls in {self.time_window}s"
+        base = f"Loop detected: {self.call_count} identical calls"
         if self.pattern:
-            base += f" (pattern: {self.pattern})"
+            base += f"\nSignature: {self.pattern}"
         return base
+
+    @property
+    def signature(self) -> str | None:
+        """Alias for pattern - the tool call signature that triggered the loop."""
+        return self.pattern
 
 
 class SentinelSystemError(SentinelError):
