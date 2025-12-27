@@ -24,7 +24,7 @@ from agent_fuse.core.exceptions import (
 )
 from agent_fuse.core.loop_detector import check_loop, get_loop_detector, reset_loop_detector
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 __all__ = [
     # Configuration
     "init",
