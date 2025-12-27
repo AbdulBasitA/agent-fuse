@@ -24,13 +24,22 @@ from uuid import UUID
 from agent_fuse.core.circuit_breaker import get_circuit_breaker
 from agent_fuse.utils.token_heuristics import estimate_tokens
 
+try:
+    from langchain_core.callbacks import BaseCallbackHandler
+except ImportError:
+    # Fallback for older langchain versions
+    try:
+        from langchain.callbacks.base import BaseCallbackHandler
+    except ImportError:
+        BaseCallbackHandler = object  # type: ignore
+
 if TYPE_CHECKING:
     from langchain_core.outputs import LLMResult
 
 logger = logging.getLogger("agent_fuse.integrations.langchain")
 
 
-class AgentFuseCallbackHandler:
+class AgentFuseCallbackHandler(BaseCallbackHandler):
     """
     LangChain callback handler for Agent Fuse budget protection.
 
